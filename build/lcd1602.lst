@@ -1,0 +1,1092 @@
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"lcd1602.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/lcd1602.c"
+  20              		.section	.text.Delay_us,"ax",%progbits
+  21              		.align	1
+  22              		.global	Delay_us
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	Delay_us:
+  28              	.LVL0:
+  29              	.LFB950:
+   1:Core/Src/lcd1602.c **** /*
+   2:Core/Src/lcd1602.c ****  * File:         lcd1602.c
+   3:Core/Src/lcd1602.c ****  * Created:      2023-09-01
+   4:Core/Src/lcd1602.c ****  * Author:       Dave Jansing
+   5:Core/Src/lcd1602.c ****  * 
+   6:Core/Src/lcd1602.c ****  * Description:  Driver for LCM1602A Liquid Crystal Display (LCD).  Borrowed heavily from
+   7:Core/Src/lcd1602.c ****  *               https://github.com/LonelyWolf/stm32
+   8:Core/Src/lcd1602.c ****  * 
+   9:Core/Src/lcd1602.c ****  * Copyright (c) 2023 Dave Jansing & JHU Whiting School of Engineering
+  10:Core/Src/lcd1602.c ****  * 
+  11:Core/Src/lcd1602.c ****  * DISCLAIMER:  This is analysis/development software and is not intended for operational or
+  12:Core/Src/lcd1602.c ****  * production use.  As such, this software is provided "as-is", without warranty, and
+  13:Core/Src/lcd1602.c ****  * disclaiming liability for damages resulting from using the code in an operational
+  14:Core/Src/lcd1602.c ****  * or production environment.  Such requires quality assurances to which this
+  15:Core/Src/lcd1602.c ****  * specific code has not been subjected.
+  16:Core/Src/lcd1602.c ****  */
+  17:Core/Src/lcd1602.c **** 
+  18:Core/Src/lcd1602.c **** // TO DO:  Check the timing for the commands
+  19:Core/Src/lcd1602.c **** 
+  20:Core/Src/lcd1602.c **** #include "lcd1602.h"
+  21:Core/Src/lcd1602.c **** 
+  22:Core/Src/lcd1602.c **** // Delay functions
+  23:Core/Src/lcd1602.c **** void Delay_us(uint8_t delay)
+  24:Core/Src/lcd1602.c **** {
+  30              		.loc 1 24 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 2
+
+
+  25:Core/Src/lcd1602.c **** 	// TO DO:  Check microsecond timer
+  26:Core/Src/lcd1602.c **** 	__HAL_TIM_SET_COUNTER(&htim2, 0);
+  35              		.loc 1 26 2 view .LVU1
+  36 0000 034B     		ldr	r3, .L3
+  37 0002 1A68     		ldr	r2, [r3]
+  38 0004 0023     		movs	r3, #0
+  39 0006 5362     		str	r3, [r2, #36]
+  27:Core/Src/lcd1602.c **** 	while (__HAL_TIM_GET_COUNTER(&htim2) < delay);
+  40              		.loc 1 27 2 view .LVU2
+  41              	.L2:
+  42              		.loc 1 27 39 discriminator 1 view .LVU3
+  43              		.loc 1 27 9 is_stmt 0 discriminator 1 view .LVU4
+  44 0008 536A     		ldr	r3, [r2, #36]
+  45              		.loc 1 27 39 discriminator 1 view .LVU5
+  46 000a 8342     		cmp	r3, r0
+  47 000c FCD3     		bcc	.L2
+  28:Core/Src/lcd1602.c **** }
+  48              		.loc 1 28 1 view .LVU6
+  49 000e 7047     		bx	lr
+  50              	.L4:
+  51              		.align	2
+  52              	.L3:
+  53 0010 00000000 		.word	htim2
+  54              		.cfi_endproc
+  55              	.LFE950:
+  57              		.section	.text.Delay_ms,"ax",%progbits
+  58              		.align	1
+  59              		.global	Delay_ms
+  60              		.syntax unified
+  61              		.thumb
+  62              		.thumb_func
+  64              	Delay_ms:
+  65              	.LVL1:
+  66              	.LFB951:
+  29:Core/Src/lcd1602.c **** 
+  30:Core/Src/lcd1602.c **** void Delay_ms(uint8_t delay)
+  31:Core/Src/lcd1602.c **** {
+  67              		.loc 1 31 1 is_stmt 1 view -0
+  68              		.cfi_startproc
+  69              		@ args = 0, pretend = 0, frame = 0
+  70              		@ frame_needed = 0, uses_anonymous_args = 0
+  71              		.loc 1 31 1 is_stmt 0 view .LVU8
+  72 0000 08B5     		push	{r3, lr}
+  73              		.cfi_def_cfa_offset 8
+  74              		.cfi_offset 3, -8
+  75              		.cfi_offset 14, -4
+  32:Core/Src/lcd1602.c **** 	HAL_Delay(delay);
+  76              		.loc 1 32 2 is_stmt 1 view .LVU9
+  77 0002 FFF7FEFF 		bl	HAL_Delay
+  78              	.LVL2:
+  33:Core/Src/lcd1602.c **** }
+  79              		.loc 1 33 1 is_stmt 0 view .LVU10
+  80 0006 08BD     		pop	{r3, pc}
+  81              		.cfi_endproc
+  82              	.LFE951:
+  84              		.section	.text.LCD_strobe,"ax",%progbits
+  85              		.align	1
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 3
+
+
+  86              		.global	LCD_strobe
+  87              		.syntax unified
+  88              		.thumb
+  89              		.thumb_func
+  91              	LCD_strobe:
+  92              	.LFB952:
+  34:Core/Src/lcd1602.c **** 
+  35:Core/Src/lcd1602.c **** // Send strobe to LCD via E line
+  36:Core/Src/lcd1602.c **** void LCD_strobe(void)
+  37:Core/Src/lcd1602.c **** {
+  93              		.loc 1 37 1 is_stmt 1 view -0
+  94              		.cfi_startproc
+  95              		@ args = 0, pretend = 0, frame = 0
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+  97 0000 08B5     		push	{r3, lr}
+  98              		.cfi_def_cfa_offset 8
+  99              		.cfi_offset 3, -8
+ 100              		.cfi_offset 14, -4
+  38:Core/Src/lcd1602.c **** 	HAL_GPIO_WritePin(GPIOA, pin_E, Bit_SET);
+ 101              		.loc 1 38 2 view .LVU12
+ 102 0002 0122     		movs	r2, #1
+ 103 0004 0221     		movs	r1, #2
+ 104 0006 4FF09040 		mov	r0, #1207959552
+ 105 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 106              	.LVL3:
+  39:Core/Src/lcd1602.c **** 	Delay_us(20); // Due to datasheet E cycle time is about ~500ns, set to 20 us to let enough time fo
+ 107              		.loc 1 39 2 view .LVU13
+ 108 000e 1420     		movs	r0, #20
+ 109 0010 FFF7FEFF 		bl	Delay_us
+ 110              	.LVL4:
+  40:Core/Src/lcd1602.c **** 	HAL_GPIO_WritePin(GPIOA, pin_E, Bit_RESET);
+ 111              		.loc 1 40 2 view .LVU14
+ 112 0014 0022     		movs	r2, #0
+ 113 0016 0221     		movs	r1, #2
+ 114 0018 4FF09040 		mov	r0, #1207959552
+ 115 001c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 116              	.LVL5:
+  41:Core/Src/lcd1602.c **** 	Delay_us(20); // Due to datasheet E cycle time is about ~500ns, set to 20 us to let enough time fo
+ 117              		.loc 1 41 2 view .LVU15
+ 118 0020 1420     		movs	r0, #20
+ 119 0022 FFF7FEFF 		bl	Delay_us
+ 120              	.LVL6:
+  42:Core/Src/lcd1602.c **** }
+ 121              		.loc 1 42 1 is_stmt 0 view .LVU16
+ 122 0026 08BD     		pop	{r3, pc}
+ 123              		.cfi_endproc
+ 124              	.LFE952:
+ 126              		.section	.text.LCD_send_4bit,"ax",%progbits
+ 127              		.align	1
+ 128              		.global	LCD_send_4bit
+ 129              		.syntax unified
+ 130              		.thumb
+ 131              		.thumb_func
+ 133              	LCD_send_4bit:
+ 134              	.LVL7:
+ 135              	.LFB953:
+  43:Core/Src/lcd1602.c **** 
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 4
+
+
+  44:Core/Src/lcd1602.c **** // Send low nibble of cmd to LCD via 4bit bus
+  45:Core/Src/lcd1602.c **** void LCD_send_4bit(uint8_t cmd)
+  46:Core/Src/lcd1602.c **** {
+ 136              		.loc 1 46 1 is_stmt 1 view -0
+ 137              		.cfi_startproc
+ 138              		@ args = 0, pretend = 0, frame = 0
+ 139              		@ frame_needed = 0, uses_anonymous_args = 0
+ 140              		.loc 1 46 1 is_stmt 0 view .LVU18
+ 141 0000 38B5     		push	{r3, r4, r5, lr}
+ 142              		.cfi_def_cfa_offset 16
+ 143              		.cfi_offset 3, -16
+ 144              		.cfi_offset 4, -12
+ 145              		.cfi_offset 5, -8
+ 146              		.cfi_offset 14, -4
+ 147 0002 0446     		mov	r4, r0
+  47:Core/Src/lcd1602.c **** 	HAL_GPIO_WritePin(GPIOC, pin_DB4, cmd & (1<<0) ? Bit_SET : Bit_RESET);
+ 148              		.loc 1 47 2 is_stmt 1 view .LVU19
+ 149 0004 0D4D     		ldr	r5, .L11
+ 150 0006 00F00102 		and	r2, r0, #1
+ 151 000a 0121     		movs	r1, #1
+ 152 000c 2846     		mov	r0, r5
+ 153              	.LVL8:
+ 154              		.loc 1 47 2 is_stmt 0 view .LVU20
+ 155 000e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 156              	.LVL9:
+  48:Core/Src/lcd1602.c **** 	HAL_GPIO_WritePin(GPIOC, pin_DB5, cmd & (1<<1) ? Bit_SET : Bit_RESET);
+ 157              		.loc 1 48 2 is_stmt 1 view .LVU21
+ 158 0012 C4F34002 		ubfx	r2, r4, #1, #1
+ 159 0016 0221     		movs	r1, #2
+ 160 0018 2846     		mov	r0, r5
+ 161 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 162              	.LVL10:
+  49:Core/Src/lcd1602.c **** 	HAL_GPIO_WritePin(GPIOC, pin_DB6, cmd & (1<<2) ? Bit_SET : Bit_RESET);
+ 163              		.loc 1 49 2 view .LVU22
+ 164 001e C4F38002 		ubfx	r2, r4, #2, #1
+ 165 0022 0421     		movs	r1, #4
+ 166 0024 2846     		mov	r0, r5
+ 167 0026 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 168              	.LVL11:
+  50:Core/Src/lcd1602.c **** 	HAL_GPIO_WritePin(GPIOC, pin_DB7, cmd & (1<<3) ? Bit_SET : Bit_RESET);
+ 169              		.loc 1 50 2 view .LVU23
+ 170 002a C4F3C002 		ubfx	r2, r4, #3, #1
+ 171 002e 0821     		movs	r1, #8
+ 172 0030 2846     		mov	r0, r5
+ 173 0032 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 174              	.LVL12:
+  51:Core/Src/lcd1602.c **** 	LCD_strobe();
+ 175              		.loc 1 51 2 view .LVU24
+ 176 0036 FFF7FEFF 		bl	LCD_strobe
+ 177              	.LVL13:
+  52:Core/Src/lcd1602.c **** }
+ 178              		.loc 1 52 1 is_stmt 0 view .LVU25
+ 179 003a 38BD     		pop	{r3, r4, r5, pc}
+ 180              	.L12:
+ 181              		.align	2
+ 182              	.L11:
+ 183 003c 00080048 		.word	1207961600
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 5
+
+
+ 184              		.cfi_endproc
+ 185              	.LFE953:
+ 187              		.section	.text.LCD_cmd_4bit,"ax",%progbits
+ 188              		.align	1
+ 189              		.global	LCD_cmd_4bit
+ 190              		.syntax unified
+ 191              		.thumb
+ 192              		.thumb_func
+ 194              	LCD_cmd_4bit:
+ 195              	.LVL14:
+ 196              	.LFB954:
+  53:Core/Src/lcd1602.c **** 
+  54:Core/Src/lcd1602.c **** // Send command to LCD via 4bit bus
+  55:Core/Src/lcd1602.c **** void LCD_cmd_4bit(uint8_t cmd)
+  56:Core/Src/lcd1602.c **** {
+ 197              		.loc 1 56 1 is_stmt 1 view -0
+ 198              		.cfi_startproc
+ 199              		@ args = 0, pretend = 0, frame = 0
+ 200              		@ frame_needed = 0, uses_anonymous_args = 0
+ 201              		.loc 1 56 1 is_stmt 0 view .LVU27
+ 202 0000 10B5     		push	{r4, lr}
+ 203              		.cfi_def_cfa_offset 8
+ 204              		.cfi_offset 4, -8
+ 205              		.cfi_offset 14, -4
+ 206 0002 0446     		mov	r4, r0
+  57:Core/Src/lcd1602.c ****     HAL_GPIO_WritePin(GPIOA, pin_RS, Bit_RESET);
+ 207              		.loc 1 57 5 is_stmt 1 view .LVU28
+ 208 0004 0022     		movs	r2, #0
+ 209 0006 0121     		movs	r1, #1
+ 210 0008 4FF09040 		mov	r0, #1207959552
+ 211              	.LVL15:
+ 212              		.loc 1 57 5 is_stmt 0 view .LVU29
+ 213 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 214              	.LVL16:
+  58:Core/Src/lcd1602.c ****     LCD_send_4bit(cmd>>4); // send high nibble
+ 215              		.loc 1 58 5 is_stmt 1 view .LVU30
+ 216 0010 2009     		lsrs	r0, r4, #4
+ 217 0012 FFF7FEFF 		bl	LCD_send_4bit
+ 218              	.LVL17:
+  59:Core/Src/lcd1602.c ****     LCD_send_4bit(cmd); // send low nibble
+ 219              		.loc 1 59 5 view .LVU31
+ 220 0016 2046     		mov	r0, r4
+ 221 0018 FFF7FEFF 		bl	LCD_send_4bit
+ 222              	.LVL18:
+  60:Core/Src/lcd1602.c ****     Delay_us(40); 	// typical command takes about 39us
+ 223              		.loc 1 60 5 view .LVU32
+ 224 001c 2820     		movs	r0, #40
+ 225 001e FFF7FEFF 		bl	Delay_us
+ 226              	.LVL19:
+  61:Core/Src/lcd1602.c **** }
+ 227              		.loc 1 61 1 is_stmt 0 view .LVU33
+ 228 0022 10BD     		pop	{r4, pc}
+ 229              		.cfi_endproc
+ 230              	.LFE954:
+ 232              		.section	.text.LCD_data_4bit,"ax",%progbits
+ 233              		.align	1
+ 234              		.global	LCD_data_4bit
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 6
+
+
+ 235              		.syntax unified
+ 236              		.thumb
+ 237              		.thumb_func
+ 239              	LCD_data_4bit:
+ 240              	.LVL20:
+ 241              	.LFB955:
+  62:Core/Src/lcd1602.c **** 
+  63:Core/Src/lcd1602.c **** // Send data to LCD via 4bit bus
+  64:Core/Src/lcd1602.c **** void LCD_data_4bit(uint8_t data)
+  65:Core/Src/lcd1602.c **** {
+ 242              		.loc 1 65 1 is_stmt 1 view -0
+ 243              		.cfi_startproc
+ 244              		@ args = 0, pretend = 0, frame = 0
+ 245              		@ frame_needed = 0, uses_anonymous_args = 0
+ 246              		.loc 1 65 1 is_stmt 0 view .LVU35
+ 247 0000 10B5     		push	{r4, lr}
+ 248              		.cfi_def_cfa_offset 8
+ 249              		.cfi_offset 4, -8
+ 250              		.cfi_offset 14, -4
+ 251 0002 0446     		mov	r4, r0
+  66:Core/Src/lcd1602.c ****     HAL_GPIO_WritePin(GPIOA, pin_RS, Bit_SET);
+ 252              		.loc 1 66 5 is_stmt 1 view .LVU36
+ 253 0004 0122     		movs	r2, #1
+ 254 0006 1146     		mov	r1, r2
+ 255 0008 4FF09040 		mov	r0, #1207959552
+ 256              	.LVL21:
+ 257              		.loc 1 66 5 is_stmt 0 view .LVU37
+ 258 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 259              	.LVL22:
+  67:Core/Src/lcd1602.c ****     LCD_send_4bit(data>>4);                 // send high nibble
+ 260              		.loc 1 67 5 is_stmt 1 view .LVU38
+ 261 0010 2009     		lsrs	r0, r4, #4
+ 262 0012 FFF7FEFF 		bl	LCD_send_4bit
+ 263              	.LVL23:
+  68:Core/Src/lcd1602.c ****     LCD_send_4bit(data);                    // send low nibble
+ 264              		.loc 1 68 5 view .LVU39
+ 265 0016 2046     		mov	r0, r4
+ 266 0018 FFF7FEFF 		bl	LCD_send_4bit
+ 267              	.LVL24:
+  69:Core/Src/lcd1602.c ****     HAL_GPIO_WritePin(GPIOA, pin_RS, Bit_RESET);
+ 268              		.loc 1 69 5 view .LVU40
+ 269 001c 0022     		movs	r2, #0
+ 270 001e 0121     		movs	r1, #1
+ 271 0020 4FF09040 		mov	r0, #1207959552
+ 272 0024 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 273              	.LVL25:
+  70:Core/Src/lcd1602.c ****     Delay_us(44);                           // write data to RAM takes about 43us
+ 274              		.loc 1 70 5 view .LVU41
+ 275 0028 2C20     		movs	r0, #44
+ 276 002a FFF7FEFF 		bl	Delay_us
+ 277              	.LVL26:
+  71:Core/Src/lcd1602.c **** }
+ 278              		.loc 1 71 1 is_stmt 0 view .LVU42
+ 279 002e 10BD     		pop	{r4, pc}
+ 280              		.cfi_endproc
+ 281              	.LFE955:
+ 283              		.section	.text.LCD_GotoXY,"ax",%progbits
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 7
+
+
+ 284              		.align	1
+ 285              		.global	LCD_GotoXY
+ 286              		.syntax unified
+ 287              		.thumb
+ 288              		.thumb_func
+ 290              	LCD_GotoXY:
+ 291              	.LVL27:
+ 292              	.LFB956:
+  72:Core/Src/lcd1602.c **** 
+  73:Core/Src/lcd1602.c **** // Set cursor position on LCD
+  74:Core/Src/lcd1602.c **** // column : Column position
+  75:Core/Src/lcd1602.c **** // line   : Line position
+  76:Core/Src/lcd1602.c **** void LCD_GotoXY(int column, int line)
+  77:Core/Src/lcd1602.c **** {
+ 293              		.loc 1 77 1 is_stmt 1 view -0
+ 294              		.cfi_startproc
+ 295              		@ args = 0, pretend = 0, frame = 0
+ 296              		@ frame_needed = 0, uses_anonymous_args = 0
+ 297              		.loc 1 77 1 is_stmt 0 view .LVU44
+ 298 0000 08B5     		push	{r3, lr}
+ 299              		.cfi_def_cfa_offset 8
+ 300              		.cfi_offset 3, -8
+ 301              		.cfi_offset 14, -4
+  78:Core/Src/lcd1602.c **** 	if ((column < 0) && (column > 15))
+ 302              		.loc 1 78 2 is_stmt 1 view .LVU45
+  79:Core/Src/lcd1602.c **** 		column = 0;
+  80:Core/Src/lcd1602.c **** 	if ((line < 0) && (line > 1))
+ 303              		.loc 1 80 2 view .LVU46
+  81:Core/Src/lcd1602.c **** 		line = 0;
+  82:Core/Src/lcd1602.c ****     LCD_cmd_4bit((column+(line<<6)) | 0x80);  // Set DDRAM address with coordinates
+ 304              		.loc 1 82 5 view .LVU47
+ 305              		.loc 1 82 31 is_stmt 0 view .LVU48
+ 306 0002 8901     		lsls	r1, r1, #6
+ 307              	.LVL28:
+ 308              		.loc 1 82 31 view .LVU49
+ 309 0004 C9B2     		uxtb	r1, r1
+ 310              		.loc 1 82 25 view .LVU50
+ 311 0006 0844     		add	r0, r0, r1
+ 312              	.LVL29:
+ 313              		.loc 1 82 5 view .LVU51
+ 314 0008 60F07F00 		orn	r0, r0, #127
+ 315 000c C0B2     		uxtb	r0, r0
+ 316 000e FFF7FEFF 		bl	LCD_cmd_4bit
+ 317              	.LVL30:
+  83:Core/Src/lcd1602.c **** }
+ 318              		.loc 1 83 1 view .LVU52
+ 319 0012 08BD     		pop	{r3, pc}
+ 320              		.cfi_endproc
+ 321              	.LFE956:
+ 323              		.section	.text.LCD_Init,"ax",%progbits
+ 324              		.align	1
+ 325              		.global	LCD_Init
+ 326              		.syntax unified
+ 327              		.thumb
+ 328              		.thumb_func
+ 330              	LCD_Init:
+ 331              	.LFB957:
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 8
+
+
+  84:Core/Src/lcd1602.c **** 
+  85:Core/Src/lcd1602.c **** // Init LCD to 4bit bus mode
+  86:Core/Src/lcd1602.c **** void LCD_Init(void)
+  87:Core/Src/lcd1602.c **** {
+ 332              		.loc 1 87 1 is_stmt 1 view -0
+ 333              		.cfi_startproc
+ 334              		@ args = 0, pretend = 0, frame = 0
+ 335              		@ frame_needed = 0, uses_anonymous_args = 0
+ 336 0000 08B5     		push	{r3, lr}
+ 337              		.cfi_def_cfa_offset 8
+ 338              		.cfi_offset 3, -8
+ 339              		.cfi_offset 14, -4
+  88:Core/Src/lcd1602.c **** 	Delay_ms(30);              // must wait >=30us after LCD Vdd rises to 4.5V
+ 340              		.loc 1 88 2 view .LVU54
+ 341 0002 1E20     		movs	r0, #30
+ 342 0004 FFF7FEFF 		bl	Delay_ms
+ 343              	.LVL31:
+  89:Core/Src/lcd1602.c **** 	LCD_send_4bit(0b00000011); // select 4-bit bus (still 8bit)
+ 344              		.loc 1 89 2 view .LVU55
+ 345 0008 0320     		movs	r0, #3
+ 346 000a FFF7FEFF 		bl	LCD_send_4bit
+ 347              	.LVL32:
+  90:Core/Src/lcd1602.c **** 	Delay_ms(5);               // must wait more than 4.1ms
+ 348              		.loc 1 90 2 view .LVU56
+ 349 000e 0520     		movs	r0, #5
+ 350 0010 FFF7FEFF 		bl	Delay_ms
+ 351              	.LVL33:
+  91:Core/Src/lcd1602.c **** 	LCD_send_4bit(0b00000011); // select 4-bit bus (still 8bit)
+ 352              		.loc 1 91 2 view .LVU57
+ 353 0014 0320     		movs	r0, #3
+ 354 0016 FFF7FEFF 		bl	LCD_send_4bit
+ 355              	.LVL34:
+  92:Core/Src/lcd1602.c **** 	Delay_us(150);             // must wait more than 100us
+ 356              		.loc 1 92 2 view .LVU58
+ 357 001a 9620     		movs	r0, #150
+ 358 001c FFF7FEFF 		bl	Delay_us
+ 359              	.LVL35:
+  93:Core/Src/lcd1602.c **** 	LCD_send_4bit(0b00000011); // select 4-bit bus (still 8bit)
+ 360              		.loc 1 93 2 view .LVU59
+ 361 0020 0320     		movs	r0, #3
+ 362 0022 FFF7FEFF 		bl	LCD_send_4bit
+ 363              	.LVL36:
+  94:Core/Src/lcd1602.c **** 	LCD_send_4bit(0b00000010); // Function set: 4-bit bus (gotcha!)
+ 364              		.loc 1 94 2 view .LVU60
+ 365 0026 0220     		movs	r0, #2
+ 366 0028 FFF7FEFF 		bl	LCD_send_4bit
+ 367              	.LVL37:
+  95:Core/Src/lcd1602.c **** 
+  96:Core/Src/lcd1602.c **** 	LCD_cmd_4bit(0x28); // LCD Function: 2 Lines, 5x8 matrix
+ 368              		.loc 1 96 2 view .LVU61
+ 369 002c 2820     		movs	r0, #40
+ 370 002e FFF7FEFF 		bl	LCD_cmd_4bit
+ 371              	.LVL38:
+  97:Core/Src/lcd1602.c **** 	LCD_cmd_4bit(0x0C); // Display control: Display: on, cursor: off
+ 372              		.loc 1 97 2 view .LVU62
+ 373 0032 0C20     		movs	r0, #12
+ 374 0034 FFF7FEFF 		bl	LCD_cmd_4bit
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 9
+
+
+ 375              	.LVL39:
+  98:Core/Src/lcd1602.c **** 	LCD_cmd_4bit(0x06); // Entry mode: increment, shift disabled
+ 376              		.loc 1 98 2 view .LVU63
+ 377 0038 0620     		movs	r0, #6
+ 378 003a FFF7FEFF 		bl	LCD_cmd_4bit
+ 379              	.LVL40:
+  99:Core/Src/lcd1602.c **** }
+ 380              		.loc 1 99 1 is_stmt 0 view .LVU64
+ 381 003e 08BD     		pop	{r3, pc}
+ 382              		.cfi_endproc
+ 383              	.LFE957:
+ 385              		.section	.text.LCD_Cls,"ax",%progbits
+ 386              		.align	1
+ 387              		.global	LCD_Cls
+ 388              		.syntax unified
+ 389              		.thumb
+ 390              		.thumb_func
+ 392              	LCD_Cls:
+ 393              	.LFB958:
+ 100:Core/Src/lcd1602.c **** 
+ 101:Core/Src/lcd1602.c **** // Clear LCD display and set cursor at first position
+ 102:Core/Src/lcd1602.c **** void LCD_Cls(void)
+ 103:Core/Src/lcd1602.c **** {
+ 394              		.loc 1 103 1 is_stmt 1 view -0
+ 395              		.cfi_startproc
+ 396              		@ args = 0, pretend = 0, frame = 0
+ 397              		@ frame_needed = 0, uses_anonymous_args = 0
+ 398 0000 08B5     		push	{r3, lr}
+ 399              		.cfi_def_cfa_offset 8
+ 400              		.cfi_offset 3, -8
+ 401              		.cfi_offset 14, -4
+ 104:Core/Src/lcd1602.c **** 	LCD_cmd_4bit(0x01); // Clear display command
+ 402              		.loc 1 104 2 view .LVU66
+ 403 0002 0120     		movs	r0, #1
+ 404 0004 FFF7FEFF 		bl	LCD_cmd_4bit
+ 405              	.LVL41:
+ 105:Core/Src/lcd1602.c **** 	Delay_ms(2); // Numb display does it at least 1.53ms
+ 406              		.loc 1 105 2 view .LVU67
+ 407 0008 0220     		movs	r0, #2
+ 408 000a FFF7FEFF 		bl	Delay_ms
+ 409              	.LVL42:
+ 106:Core/Src/lcd1602.c **** 	LCD_cmd_4bit(0x02); // Return Home command
+ 410              		.loc 1 106 2 view .LVU68
+ 411 000e 0220     		movs	r0, #2
+ 412 0010 FFF7FEFF 		bl	LCD_cmd_4bit
+ 413              	.LVL43:
+ 107:Core/Src/lcd1602.c **** 	Delay_ms(2); // Numb display does it at least 1.53ms
+ 414              		.loc 1 107 2 view .LVU69
+ 415 0014 0220     		movs	r0, #2
+ 416 0016 FFF7FEFF 		bl	Delay_ms
+ 417              	.LVL44:
+ 108:Core/Src/lcd1602.c **** }
+ 418              		.loc 1 108 1 is_stmt 0 view .LVU70
+ 419 001a 08BD     		pop	{r3, pc}
+ 420              		.cfi_endproc
+ 421              	.LFE958:
+ 423              		.section	.text.LCD_Print,"ax",%progbits
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 10
+
+
+ 424              		.align	1
+ 425              		.global	LCD_Print
+ 426              		.syntax unified
+ 427              		.thumb
+ 428              		.thumb_func
+ 430              	LCD_Print:
+ 431              	.LVL45:
+ 432              	.LFB959:
+ 109:Core/Src/lcd1602.c **** 
+ 110:Core/Src/lcd1602.c **** // Send string to LCD
+ 111:Core/Src/lcd1602.c **** void LCD_Print(char *string)
+ 112:Core/Src/lcd1602.c **** {
+ 433              		.loc 1 112 1 is_stmt 1 view -0
+ 434              		.cfi_startproc
+ 435              		@ args = 0, pretend = 0, frame = 0
+ 436              		@ frame_needed = 0, uses_anonymous_args = 0
+ 437              		.loc 1 112 1 is_stmt 0 view .LVU72
+ 438 0000 10B5     		push	{r4, lr}
+ 439              		.cfi_def_cfa_offset 8
+ 440              		.cfi_offset 4, -8
+ 441              		.cfi_offset 14, -4
+ 442 0002 0446     		mov	r4, r0
+ 113:Core/Src/lcd1602.c ****     while (*string) { LCD_data_4bit(*string++); }
+ 443              		.loc 1 113 5 is_stmt 1 view .LVU73
+ 444              		.loc 1 113 11 is_stmt 0 view .LVU74
+ 445 0004 02E0     		b	.L24
+ 446              	.LVL46:
+ 447              	.L25:
+ 448              		.loc 1 113 23 is_stmt 1 discriminator 2 view .LVU75
+ 449              		.loc 1 113 44 is_stmt 0 discriminator 2 view .LVU76
+ 450 0006 0134     		adds	r4, r4, #1
+ 451              	.LVL47:
+ 452              		.loc 1 113 23 discriminator 2 view .LVU77
+ 453 0008 FFF7FEFF 		bl	LCD_data_4bit
+ 454              	.LVL48:
+ 455              	.L24:
+ 456              		.loc 1 113 12 is_stmt 1 discriminator 1 view .LVU78
+ 457 000c 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 458 000e 0028     		cmp	r0, #0
+ 459 0010 F9D1     		bne	.L25
+ 114:Core/Src/lcd1602.c **** }
+ 460              		.loc 1 114 1 is_stmt 0 view .LVU79
+ 461 0012 10BD     		pop	{r4, pc}
+ 462              		.loc 1 114 1 view .LVU80
+ 463              		.cfi_endproc
+ 464              	.LFE959:
+ 466              		.section	.text.LCD_PrintI,"ax",%progbits
+ 467              		.align	1
+ 468              		.global	LCD_PrintI
+ 469              		.syntax unified
+ 470              		.thumb
+ 471              		.thumb_func
+ 473              	LCD_PrintI:
+ 474              	.LVL49:
+ 475              	.LFB960:
+ 115:Core/Src/lcd1602.c **** 
+ 116:Core/Src/lcd1602.c **** // Send integer to LCD
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 11
+
+
+ 117:Core/Src/lcd1602.c **** void LCD_PrintI(uint32_t num)
+ 118:Core/Src/lcd1602.c **** {
+ 476              		.loc 1 118 1 is_stmt 1 view -0
+ 477              		.cfi_startproc
+ 478              		@ args = 0, pretend = 0, frame = 16
+ 479              		@ frame_needed = 0, uses_anonymous_args = 0
+ 480              		.loc 1 118 1 is_stmt 0 view .LVU82
+ 481 0000 10B5     		push	{r4, lr}
+ 482              		.cfi_def_cfa_offset 8
+ 483              		.cfi_offset 4, -8
+ 484              		.cfi_offset 14, -4
+ 485 0002 84B0     		sub	sp, sp, #16
+ 486              		.cfi_def_cfa_offset 24
+ 119:Core/Src/lcd1602.c **** 	char str[11]; // 10 chars max for UINT32_MAX
+ 487              		.loc 1 119 2 is_stmt 1 view .LVU83
+ 120:Core/Src/lcd1602.c **** 	int i = 0;
+ 488              		.loc 1 120 2 view .LVU84
+ 489              	.LVL50:
+ 490              		.loc 1 120 6 is_stmt 0 view .LVU85
+ 491 0004 0022     		movs	r2, #0
+ 492              	.LVL51:
+ 493              	.L28:
+ 121:Core/Src/lcd1602.c **** 	do { str[i++] = num % 10 + '0'; } while ((num /= 10) > 0);
+ 494              		.loc 1 121 2 is_stmt 1 discriminator 1 view .LVU86
+ 495              		.loc 1 121 7 discriminator 1 view .LVU87
+ 496              		.loc 1 121 22 is_stmt 0 discriminator 1 view .LVU88
+ 497 0006 114B     		ldr	r3, .L32
+ 498 0008 A3FB0013 		umull	r1, r3, r3, r0
+ 499 000c DB08     		lsrs	r3, r3, #3
+ 500 000e 1946     		mov	r1, r3
+ 501 0010 03EB8303 		add	r3, r3, r3, lsl #2
+ 502 0014 A0EB4303 		sub	r3, r0, r3, lsl #1
+ 503 0018 1446     		mov	r4, r2
+ 504              		.loc 1 121 12 discriminator 1 view .LVU89
+ 505 001a 0132     		adds	r2, r2, #1
+ 506              	.LVL52:
+ 507              		.loc 1 121 27 discriminator 1 view .LVU90
+ 508 001c 3033     		adds	r3, r3, #48
+ 509              		.loc 1 121 16 discriminator 1 view .LVU91
+ 510 001e 04F1100C 		add	ip, r4, #16
+ 511 0022 EC44     		add	ip, sp, ip
+ 512 0024 0CF80C3C 		strb	r3, [ip, #-12]
+ 513              		.loc 1 121 55 is_stmt 1 discriminator 1 view .LVU92
+ 514 0028 0346     		mov	r3, r0
+ 515              		.loc 1 121 48 is_stmt 0 discriminator 1 view .LVU93
+ 516 002a 0846     		mov	r0, r1
+ 517              	.LVL53:
+ 518              		.loc 1 121 55 discriminator 1 view .LVU94
+ 519 002c 092B     		cmp	r3, #9
+ 520 002e EAD8     		bhi	.L28
+ 521 0030 07E0     		b	.L29
+ 522              	.LVL54:
+ 523              	.L30:
+ 122:Core/Src/lcd1602.c **** 	for (i--; i>=0; i--) { LCD_data_4bit(str[i]); }
+ 524              		.loc 1 122 25 is_stmt 1 discriminator 3 view .LVU95
+ 525              		.loc 1 122 42 is_stmt 0 discriminator 3 view .LVU96
+ 526 0032 04F11003 		add	r3, r4, #16
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 12
+
+
+ 527 0036 6B44     		add	r3, sp, r3
+ 528              		.loc 1 122 25 discriminator 3 view .LVU97
+ 529 0038 13F80C0C 		ldrb	r0, [r3, #-12]	@ zero_extendqisi2
+ 530 003c FFF7FEFF 		bl	LCD_data_4bit
+ 531              	.LVL55:
+ 532              		.loc 1 122 19 is_stmt 1 discriminator 3 view .LVU98
+ 533 0040 013C     		subs	r4, r4, #1
+ 534              	.LVL56:
+ 535              	.L29:
+ 536              		.loc 1 122 13 discriminator 1 view .LVU99
+ 537 0042 002C     		cmp	r4, #0
+ 538 0044 F5DA     		bge	.L30
+ 123:Core/Src/lcd1602.c **** }
+ 539              		.loc 1 123 1 is_stmt 0 view .LVU100
+ 540 0046 04B0     		add	sp, sp, #16
+ 541              		.cfi_def_cfa_offset 8
+ 542              		@ sp needed
+ 543 0048 10BD     		pop	{r4, pc}
+ 544              	.LVL57:
+ 545              	.L33:
+ 546              		.loc 1 123 1 view .LVU101
+ 547 004a 00BF     		.align	2
+ 548              	.L32:
+ 549 004c CDCCCCCC 		.word	-858993459
+ 550              		.cfi_endproc
+ 551              	.LFE960:
+ 553              		.section	.rodata.LCD_PrintH.str1.4,"aMS",%progbits,1
+ 554              		.align	2
+ 555              	.LC0:
+ 556 0000 30313233 		.ascii	"0123456789ABCDEF\000"
+ 556      34353637 
+ 556      38394142 
+ 556      43444546 
+ 556      00
+ 557              		.section	.text.LCD_PrintH,"ax",%progbits
+ 558              		.align	1
+ 559              		.global	LCD_PrintH
+ 560              		.syntax unified
+ 561              		.thumb
+ 562              		.thumb_func
+ 564              	LCD_PrintH:
+ 565              	.LVL58:
+ 566              	.LFB961:
+ 124:Core/Src/lcd1602.c **** 
+ 125:Core/Src/lcd1602.c **** // Send HEX integer to LCD
+ 126:Core/Src/lcd1602.c **** void LCD_PrintH(uint32_t num)
+ 127:Core/Src/lcd1602.c **** {
+ 567              		.loc 1 127 1 is_stmt 1 view -0
+ 568              		.cfi_startproc
+ 569              		@ args = 0, pretend = 0, frame = 16
+ 570              		@ frame_needed = 0, uses_anonymous_args = 0
+ 571              		.loc 1 127 1 is_stmt 0 view .LVU103
+ 572 0000 10B5     		push	{r4, lr}
+ 573              		.cfi_def_cfa_offset 8
+ 574              		.cfi_offset 4, -8
+ 575              		.cfi_offset 14, -4
+ 576 0002 84B0     		sub	sp, sp, #16
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 13
+
+
+ 577              		.cfi_def_cfa_offset 24
+ 128:Core/Src/lcd1602.c **** 	char str[11]; // 10 chars max for UINT32_MAX in HEX
+ 578              		.loc 1 128 2 is_stmt 1 view .LVU104
+ 129:Core/Src/lcd1602.c **** 	int i = 0;
+ 579              		.loc 1 129 2 view .LVU105
+ 580              	.LVL59:
+ 581              		.loc 1 129 6 is_stmt 0 view .LVU106
+ 582 0004 0022     		movs	r2, #0
+ 583              	.LVL60:
+ 584              	.L35:
+ 130:Core/Src/lcd1602.c **** 	do { str[i++] = "0123456789ABCDEF"[num % 0x10]; } while ((num /= 0x10) > 0);
+ 585              		.loc 1 130 2 is_stmt 1 discriminator 1 view .LVU107
+ 586              		.loc 1 130 7 discriminator 1 view .LVU108
+ 587              		.loc 1 130 41 is_stmt 0 discriminator 1 view .LVU109
+ 588 0006 00F00F03 		and	r3, r0, #15
+ 589 000a 1446     		mov	r4, r2
+ 590              		.loc 1 130 12 discriminator 1 view .LVU110
+ 591 000c 0132     		adds	r2, r2, #1
+ 592              	.LVL61:
+ 593              		.loc 1 130 36 discriminator 1 view .LVU111
+ 594 000e 1349     		ldr	r1, .L39
+ 595 0010 C95C     		ldrb	r1, [r1, r3]	@ zero_extendqisi2
+ 596              		.loc 1 130 16 discriminator 1 view .LVU112
+ 597 0012 04F11003 		add	r3, r4, #16
+ 598 0016 6B44     		add	r3, sp, r3
+ 599 0018 03F80C1C 		strb	r1, [r3, #-12]
+ 600              		.loc 1 130 73 is_stmt 1 discriminator 1 view .LVU113
+ 601              		.loc 1 130 73 is_stmt 0 discriminator 1 view .LVU114
+ 602 001c 0F28     		cmp	r0, #15
+ 603 001e 4FEA1010 		lsr	r0, r0, #4
+ 604              	.LVL62:
+ 605              		.loc 1 130 73 discriminator 1 view .LVU115
+ 606 0022 F0D8     		bhi	.L35
+ 131:Core/Src/lcd1602.c **** 	str[i++] = 'x';
+ 607              		.loc 1 131 2 is_stmt 1 view .LVU116
+ 608              		.loc 1 131 7 is_stmt 0 view .LVU117
+ 609 0024 0234     		adds	r4, r4, #2
+ 610              	.LVL63:
+ 611              		.loc 1 131 11 view .LVU118
+ 612 0026 02F11003 		add	r3, r2, #16
+ 613 002a 0DEB0302 		add	r2, sp, r3
+ 614 002e 7823     		movs	r3, #120
+ 615 0030 02F80C3C 		strb	r3, [r2, #-12]
+ 132:Core/Src/lcd1602.c **** 	str[i++] = '0';
+ 616              		.loc 1 132 2 is_stmt 1 view .LVU119
+ 617              	.LVL64:
+ 618              		.loc 1 132 11 is_stmt 0 view .LVU120
+ 619 0034 04F11003 		add	r3, r4, #16
+ 620 0038 6B44     		add	r3, sp, r3
+ 621 003a 3022     		movs	r2, #48
+ 622 003c 03F80C2C 		strb	r2, [r3, #-12]
+ 133:Core/Src/lcd1602.c **** 	for (i--; i>=0; i--) { LCD_data_4bit(str[i]); }
+ 623              		.loc 1 133 2 is_stmt 1 view .LVU121
+ 624              	.LVL65:
+ 625              		.loc 1 133 2 is_stmt 0 view .LVU122
+ 626 0040 07E0     		b	.L36
+ 627              	.L37:
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 14
+
+
+ 628              		.loc 1 133 25 is_stmt 1 discriminator 3 view .LVU123
+ 629              		.loc 1 133 42 is_stmt 0 discriminator 3 view .LVU124
+ 630 0042 04F11003 		add	r3, r4, #16
+ 631 0046 6B44     		add	r3, sp, r3
+ 632              		.loc 1 133 25 discriminator 3 view .LVU125
+ 633 0048 13F80C0C 		ldrb	r0, [r3, #-12]	@ zero_extendqisi2
+ 634 004c FFF7FEFF 		bl	LCD_data_4bit
+ 635              	.LVL66:
+ 636              		.loc 1 133 19 is_stmt 1 discriminator 3 view .LVU126
+ 637 0050 013C     		subs	r4, r4, #1
+ 638              	.LVL67:
+ 639              	.L36:
+ 640              		.loc 1 133 13 discriminator 1 view .LVU127
+ 641 0052 002C     		cmp	r4, #0
+ 642 0054 F5DA     		bge	.L37
+ 134:Core/Src/lcd1602.c **** }
+ 643              		.loc 1 134 1 is_stmt 0 view .LVU128
+ 644 0056 04B0     		add	sp, sp, #16
+ 645              		.cfi_def_cfa_offset 8
+ 646              		@ sp needed
+ 647 0058 10BD     		pop	{r4, pc}
+ 648              	.LVL68:
+ 649              	.L40:
+ 650              		.loc 1 134 1 view .LVU129
+ 651 005a 00BF     		.align	2
+ 652              	.L39:
+ 653 005c 00000000 		.word	.LC0
+ 654              		.cfi_endproc
+ 655              	.LFE961:
+ 657              		.section	.rodata.LCD_PrintB8.str1.4,"aMS",%progbits,1
+ 658              		.align	2
+ 659              	.LC1:
+ 660 0000 30303030 		.ascii	"00000000\000"
+ 660      30303030 
+ 660      00
+ 661              		.section	.text.LCD_PrintB8,"ax",%progbits
+ 662              		.align	1
+ 663              		.global	LCD_PrintB8
+ 664              		.syntax unified
+ 665              		.thumb
+ 666              		.thumb_func
+ 668              	LCD_PrintB8:
+ 669              	.LVL69:
+ 670              	.LFB962:
+ 135:Core/Src/lcd1602.c **** 
+ 136:Core/Src/lcd1602.c **** // Send BIN integer to LCD (max 8bit number)
+ 137:Core/Src/lcd1602.c **** void LCD_PrintB8(uint8_t num) 
+ 138:Core/Src/lcd1602.c **** {
+ 671              		.loc 1 138 1 is_stmt 1 view -0
+ 672              		.cfi_startproc
+ 673              		@ args = 0, pretend = 0, frame = 8
+ 674              		@ frame_needed = 0, uses_anonymous_args = 0
+ 675              		.loc 1 138 1 is_stmt 0 view .LVU131
+ 676 0000 10B5     		push	{r4, lr}
+ 677              		.cfi_def_cfa_offset 8
+ 678              		.cfi_offset 4, -8
+ 679              		.cfi_offset 14, -4
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 15
+
+
+ 680 0002 82B0     		sub	sp, sp, #8
+ 681              		.cfi_def_cfa_offset 16
+ 682 0004 0246     		mov	r2, r0
+ 139:Core/Src/lcd1602.c **** 	char str[8] = "00000000";
+ 683              		.loc 1 139 2 is_stmt 1 view .LVU132
+ 684              		.loc 1 139 7 is_stmt 0 view .LVU133
+ 685 0006 114B     		ldr	r3, .L46
+ 686 0008 93E80300 		ldm	r3, {r0, r1}
+ 687              	.LVL70:
+ 688              		.loc 1 139 7 view .LVU134
+ 689 000c 02AB     		add	r3, sp, #8
+ 690 000e 03E90300 		stmdb	r3, {r0, r1}
+ 140:Core/Src/lcd1602.c **** 	int i = 0;
+ 691              		.loc 1 140 2 is_stmt 1 view .LVU135
+ 692              	.LVL71:
+ 693              		.loc 1 140 6 is_stmt 0 view .LVU136
+ 694 0012 0020     		movs	r0, #0
+ 695              	.LVL72:
+ 696              	.L42:
+ 141:Core/Src/lcd1602.c **** 	do { str[i++] = num % 2 + '0'; } while ((num /= 2) > 0);
+ 697              		.loc 1 141 2 is_stmt 1 discriminator 1 view .LVU137
+ 698              		.loc 1 141 7 discriminator 1 view .LVU138
+ 699              		.loc 1 141 22 is_stmt 0 discriminator 1 view .LVU139
+ 700 0014 02F00101 		and	r1, r2, #1
+ 701 0018 0346     		mov	r3, r0
+ 702              		.loc 1 141 26 discriminator 1 view .LVU140
+ 703 001a 3031     		adds	r1, r1, #48
+ 704              		.loc 1 141 16 discriminator 1 view .LVU141
+ 705 001c 0833     		adds	r3, r3, #8
+ 706 001e 6B44     		add	r3, sp, r3
+ 707 0020 0130     		adds	r0, r0, #1
+ 708              	.LVL73:
+ 709              		.loc 1 141 16 discriminator 1 view .LVU142
+ 710 0022 03F8081C 		strb	r1, [r3, #-8]
+ 711              		.loc 1 141 53 is_stmt 1 discriminator 1 view .LVU143
+ 712              		.loc 1 141 53 is_stmt 0 discriminator 1 view .LVU144
+ 713 0026 012A     		cmp	r2, #1
+ 714 0028 4FEA5202 		lsr	r2, r2, #1
+ 715              	.LVL74:
+ 716              		.loc 1 141 53 discriminator 1 view .LVU145
+ 717 002c F2D8     		bhi	.L42
+ 142:Core/Src/lcd1602.c **** 	for (i=7; i>=0; i--) { LCD_data_4bit(str[i]); }
+ 718              		.loc 1 142 8 view .LVU146
+ 719 002e 0724     		movs	r4, #7
+ 720 0030 07E0     		b	.L43
+ 721              	.LVL75:
+ 722              	.L44:
+ 723              		.loc 1 142 25 is_stmt 1 discriminator 3 view .LVU147
+ 724              		.loc 1 142 42 is_stmt 0 discriminator 3 view .LVU148
+ 725 0032 04F10803 		add	r3, r4, #8
+ 726 0036 6B44     		add	r3, sp, r3
+ 727              		.loc 1 142 25 discriminator 3 view .LVU149
+ 728 0038 13F8080C 		ldrb	r0, [r3, #-8]	@ zero_extendqisi2
+ 729 003c FFF7FEFF 		bl	LCD_data_4bit
+ 730              	.LVL76:
+ 731              		.loc 1 142 19 is_stmt 1 discriminator 3 view .LVU150
+ 732 0040 013C     		subs	r4, r4, #1
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 16
+
+
+ 733              	.LVL77:
+ 734              	.L43:
+ 735              		.loc 1 142 13 discriminator 1 view .LVU151
+ 736 0042 002C     		cmp	r4, #0
+ 737 0044 F5DA     		bge	.L44
+ 143:Core/Src/lcd1602.c **** }
+ 738              		.loc 1 143 1 is_stmt 0 view .LVU152
+ 739 0046 02B0     		add	sp, sp, #8
+ 740              		.cfi_def_cfa_offset 8
+ 741              		@ sp needed
+ 742 0048 10BD     		pop	{r4, pc}
+ 743              	.LVL78:
+ 744              	.L47:
+ 745              		.loc 1 143 1 view .LVU153
+ 746 004a 00BF     		.align	2
+ 747              	.L46:
+ 748 004c 00000000 		.word	.LC1
+ 749              		.cfi_endproc
+ 750              	.LFE962:
+ 752              		.section	.rodata.LCD_PrintB16.str1.4,"aMS",%progbits,1
+ 753              		.align	2
+ 754              	.LC2:
+ 755 0000 30303030 		.ascii	"0000000000000000\000"
+ 755      30303030 
+ 755      30303030 
+ 755      30303030 
+ 755      00
+ 756              		.section	.text.LCD_PrintB16,"ax",%progbits
+ 757              		.align	1
+ 758              		.global	LCD_PrintB16
+ 759              		.syntax unified
+ 760              		.thumb
+ 761              		.thumb_func
+ 763              	LCD_PrintB16:
+ 764              	.LVL79:
+ 765              	.LFB963:
+ 144:Core/Src/lcd1602.c **** 
+ 145:Core/Src/lcd1602.c **** // Send BIN integer to LCD (max 16bit number)
+ 146:Core/Src/lcd1602.c **** void LCD_PrintB16(uint16_t num)
+ 147:Core/Src/lcd1602.c **** {
+ 766              		.loc 1 147 1 is_stmt 1 view -0
+ 767              		.cfi_startproc
+ 768              		@ args = 0, pretend = 0, frame = 16
+ 769              		@ frame_needed = 0, uses_anonymous_args = 0
+ 770              		.loc 1 147 1 is_stmt 0 view .LVU155
+ 771 0000 10B5     		push	{r4, lr}
+ 772              		.cfi_def_cfa_offset 8
+ 773              		.cfi_offset 4, -8
+ 774              		.cfi_offset 14, -4
+ 775 0002 84B0     		sub	sp, sp, #16
+ 776              		.cfi_def_cfa_offset 24
+ 777 0004 0446     		mov	r4, r0
+ 148:Core/Src/lcd1602.c **** 	char str[16] = "0000000000000000";
+ 778              		.loc 1 148 2 is_stmt 1 view .LVU156
+ 779              		.loc 1 148 7 is_stmt 0 view .LVU157
+ 780 0006 114B     		ldr	r3, .L53
+ 781 0008 0FCB     		ldm	r3, {r0, r1, r2, r3}
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 17
+
+
+ 782              	.LVL80:
+ 783              		.loc 1 148 7 view .LVU158
+ 784 000a 0DF1100C 		add	ip, sp, #16
+ 785 000e 0CE90F00 		stmdb	ip, {r0, r1, r2, r3}
+ 149:Core/Src/lcd1602.c **** 	int i = 0;
+ 786              		.loc 1 149 2 is_stmt 1 view .LVU159
+ 787              	.LVL81:
+ 788              		.loc 1 149 6 is_stmt 0 view .LVU160
+ 789 0012 0021     		movs	r1, #0
+ 790              	.LVL82:
+ 791              	.L49:
+ 150:Core/Src/lcd1602.c **** 	do { str[i++] = num % 2 + '0'; } while ((num /= 2) > 0);
+ 792              		.loc 1 150 2 is_stmt 1 discriminator 1 view .LVU161
+ 793              		.loc 1 150 7 discriminator 1 view .LVU162
+ 794              		.loc 1 150 22 is_stmt 0 discriminator 1 view .LVU163
+ 795 0014 04F00102 		and	r2, r4, #1
+ 796 0018 0B46     		mov	r3, r1
+ 797              		.loc 1 150 26 discriminator 1 view .LVU164
+ 798 001a 3032     		adds	r2, r2, #48
+ 799              		.loc 1 150 16 discriminator 1 view .LVU165
+ 800 001c 1033     		adds	r3, r3, #16
+ 801 001e 6B44     		add	r3, sp, r3
+ 802 0020 0131     		adds	r1, r1, #1
+ 803              	.LVL83:
+ 804              		.loc 1 150 16 discriminator 1 view .LVU166
+ 805 0022 03F8102C 		strb	r2, [r3, #-16]
+ 806              		.loc 1 150 53 is_stmt 1 discriminator 1 view .LVU167
+ 807              		.loc 1 150 53 is_stmt 0 discriminator 1 view .LVU168
+ 808 0026 012C     		cmp	r4, #1
+ 809 0028 4FEA5404 		lsr	r4, r4, #1
+ 810              	.LVL84:
+ 811              		.loc 1 150 53 discriminator 1 view .LVU169
+ 812 002c F2D8     		bhi	.L49
+ 151:Core/Src/lcd1602.c **** 	for (i=15; i>=0; i--) { LCD_data_4bit(str[i]); }
+ 813              		.loc 1 151 8 view .LVU170
+ 814 002e 0F24     		movs	r4, #15
+ 815 0030 07E0     		b	.L50
+ 816              	.LVL85:
+ 817              	.L51:
+ 818              		.loc 1 151 26 is_stmt 1 discriminator 3 view .LVU171
+ 819              		.loc 1 151 43 is_stmt 0 discriminator 3 view .LVU172
+ 820 0032 04F11003 		add	r3, r4, #16
+ 821 0036 6B44     		add	r3, sp, r3
+ 822              		.loc 1 151 26 discriminator 3 view .LVU173
+ 823 0038 13F8100C 		ldrb	r0, [r3, #-16]	@ zero_extendqisi2
+ 824 003c FFF7FEFF 		bl	LCD_data_4bit
+ 825              	.LVL86:
+ 826              		.loc 1 151 20 is_stmt 1 discriminator 3 view .LVU174
+ 827 0040 013C     		subs	r4, r4, #1
+ 828              	.LVL87:
+ 829              	.L50:
+ 830              		.loc 1 151 14 discriminator 1 view .LVU175
+ 831 0042 002C     		cmp	r4, #0
+ 832 0044 F5DA     		bge	.L51
+ 152:Core/Src/lcd1602.c **** }...
+ 833              		.loc 1 152 1 is_stmt 0 view .LVU176
+ 834 0046 04B0     		add	sp, sp, #16
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 18
+
+
+ 835              		.cfi_def_cfa_offset 8
+ 836              		@ sp needed
+ 837 0048 10BD     		pop	{r4, pc}
+ 838              	.LVL88:
+ 839              	.L54:
+ 840              		.loc 1 152 1 view .LVU177
+ 841 004a 00BF     		.align	2
+ 842              	.L53:
+ 843 004c 00000000 		.word	.LC2
+ 844              		.cfi_endproc
+ 845              	.LFE963:
+ 847              		.text
+ 848              	.Letext0:
+ 849              		.file 2 "c:\\users\\joshua\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vscode\\@xp
+ 850              		.file 3 "c:\\users\\joshua\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vscode\\@xp
+ 851              		.file 4 "Drivers/CMSIS/Device/ST/STM32WBxx/Include/stm32wb55xx.h"
+ 852              		.file 5 "Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal_def.h"
+ 853              		.file 6 "Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal_dma.h"
+ 854              		.file 7 "Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal_gpio.h"
+ 855              		.file 8 "Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal_tim.h"
+ 856              		.file 9 "Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal.h"
+ 857              		.file 10 "Core/Inc/tim.h"
+ARM GAS  C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s 			page 19
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 lcd1602.c
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:21     .text.Delay_us:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:27     .text.Delay_us:00000000 Delay_us
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:53     .text.Delay_us:00000010 $d
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:58     .text.Delay_ms:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:64     .text.Delay_ms:00000000 Delay_ms
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:85     .text.LCD_strobe:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:91     .text.LCD_strobe:00000000 LCD_strobe
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:127    .text.LCD_send_4bit:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:133    .text.LCD_send_4bit:00000000 LCD_send_4bit
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:183    .text.LCD_send_4bit:0000003c $d
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:188    .text.LCD_cmd_4bit:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:194    .text.LCD_cmd_4bit:00000000 LCD_cmd_4bit
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:233    .text.LCD_data_4bit:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:239    .text.LCD_data_4bit:00000000 LCD_data_4bit
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:284    .text.LCD_GotoXY:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:290    .text.LCD_GotoXY:00000000 LCD_GotoXY
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:324    .text.LCD_Init:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:330    .text.LCD_Init:00000000 LCD_Init
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:386    .text.LCD_Cls:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:392    .text.LCD_Cls:00000000 LCD_Cls
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:424    .text.LCD_Print:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:430    .text.LCD_Print:00000000 LCD_Print
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:467    .text.LCD_PrintI:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:473    .text.LCD_PrintI:00000000 LCD_PrintI
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:549    .text.LCD_PrintI:0000004c $d
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:554    .rodata.LCD_PrintH.str1.4:00000000 $d
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:558    .text.LCD_PrintH:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:564    .text.LCD_PrintH:00000000 LCD_PrintH
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:653    .text.LCD_PrintH:0000005c $d
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:658    .rodata.LCD_PrintB8.str1.4:00000000 $d
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:662    .text.LCD_PrintB8:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:668    .text.LCD_PrintB8:00000000 LCD_PrintB8
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:748    .text.LCD_PrintB8:0000004c $d
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:753    .rodata.LCD_PrintB16.str1.4:00000000 $d
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:757    .text.LCD_PrintB16:00000000 $t
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:763    .text.LCD_PrintB16:00000000 LCD_PrintB16
+C:\Users\Joshua\AppData\Local\Temp\ccxbwgRA.s:843    .text.LCD_PrintB16:0000004c $d
+
+UNDEFINED SYMBOLS
+htim2
+HAL_Delay
+HAL_GPIO_WritePin
